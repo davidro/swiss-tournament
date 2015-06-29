@@ -3,4 +3,4 @@ This is Tournament project. It contains:
 - and python code to query this data and determine the winners of various games
 
 To run this project start by creating a database and import tournament.sql to create schema.
-Look at the tournament.sql comments for mor instructions.
+Look at the tournament.sql comments for more instructions.

@@ -105,7 +105,7 @@ def reportMatch(player1, player2, outcome="nontied"):
     if outcome == "tied":
         c.execute("INSERT INTO matches (player1,player2,outcome) values (%s, %s, %s)",(player1,player2,"tied"))
     else:
-        c.execute("INSERT INTO matches (player1,player2) values (%s, %s)",(player1,player2))
+        c.execute("INSERT INTO matches (player1,player2) values (%s, %sgit )",(player1,player2))
     DB.commit()
     DB.close()
 

@@ -33,7 +33,9 @@ def countPlayers():
     """Returns the number of players currently registered."""
     DB = connect()
     c = DB.cursor()
-    c.execute("SELECT COUNT(*) from players;")
+    # c.execute("SELECT COUNT(*) from players;")
+    # use view instead
+    c.execute("SELECT num FROM players_num;")
     r = c.fetchone()
     DB.close()
     return r[0]
@@ -74,13 +76,13 @@ def playerStandings():
         SELECT players.id, players.name, coalesce(wintable.wins, 0), coalesce(matchtable.matches, 0)
         FROM players
         LEFT JOIN (
-            SELECT winner as id, count(winner) as wins
+            SELECT player1 as id, count(player1) as wins
             FROM matches
-            GROUP BY winner) AS wintable ON players.id = wintable.id
+            GROUP BY player1) AS wintable ON players.id = wintable.id
         LEFT JOIN (
             SELECT id, count(id) as matches
             FROM players, matches
-            WHERE players.id = winner OR players.id = loser
+            WHERE players.id = player1 OR players.id = player2
             GROUP BY id) AS matchtable ON players.id = matchtable.id
         ORDER BY CASE WHEN wins is null THEN 1 ELSE 0 END, wins desc;
         """
@@ -90,16 +92,20 @@ def playerStandings():
     return r
 
 
-def reportMatch(winner, loser):
+def reportMatch(player1, player2, outcome="nontied"):
     """Records the outcome of a single match between two players.
 
     Args:
-      winner:  the id number of the player who won
-      loser:  the id number of the player who lost
+      player1: the id number of the player who won
+      player2: the id number of the player who lost
+      outcome: in case outcome of game is tied game, the third paramter outcome paramter should be passed as "tied"
     """
     DB = connect()
     c = DB.cursor()
-    c.execute("INSERT INTO matches (winner,loser) values (%s, %s)",(winner,loser))
+    if outcome == "tied":
+        c.execute("INSERT INTO matches (player1,player2,outcome) values (%s, %s, %s)",(player1,player2,"tied"))
+    else:
+        c.execute("INSERT INTO matches (player1,player2) values (%s, %s)",(player1,player2))
     DB.commit()
     DB.close()
 

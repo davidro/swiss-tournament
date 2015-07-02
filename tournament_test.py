@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-#
-# Test cases for tournament.py
 
 from tournament import *
 
@@ -124,6 +122,29 @@ def testPairings():
             "After one match, players with one win should be paired.")
     print "8. After one match, players with one win are paired."
 
+def testTiedGames():
+    deleteMatches()
+    deletePlayers()
+    registerPlayer("Piko Garcia")
+    registerPlayer("Pako Rodriguez")
+    registerPlayer("Poko Martinez")
+    registerPlayer("Peko Lopez")
+    standings = playerStandings()
+    [id1, id2, id3, id4] = [row[0] for row in standings]
+    reportMatch(id1, id2, True)
+    reportMatch(id3, id4, True)
+    pairings = swissPairings()
+    if len(pairings) != 2:
+        raise ValueError(
+            "For four players, swissPairings should return two pairs.")
+    [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4)] = pairings
+    correct_pairs = set([frozenset([id1, id3]), frozenset([id2, id4])])
+    actual_pairs = set([frozenset([pid1, pid2]), frozenset([pid3, pid4])])
+    if correct_pairs != actual_pairs:
+        raise ValueError(
+            "After one match, players with tied game result should be paired.")
+    print "9. After one match, players with tied game results are paired."
+
 
 if __name__ == '__main__':
     testDeleteMatches()
@@ -134,6 +155,5 @@ if __name__ == '__main__':
     testStandingsBeforeMatches()
     testReportMatches()
     testPairings()
+    testTiedGames()
     print "Success!  All tests pass!"
-
-

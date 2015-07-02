@@ -1,46 +1,29 @@
 #!/usr/bin/env python
-#
 # tournament.py -- implementation of a Swiss-system tournament
-#
-
-import psycopg2
 
 
-def connect():
-    """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+# imports the db.py helper module to handle database connection, querying, executing and closing
+from DB import *
 
-
+# deletes all the entries in matches table
 def deleteMatches():
     """Remove all the match records from the database."""
-    DB = connect()
-    c = DB.cursor()
-    c.execute("DELETE from matches;")
-    DB.commit()
-    DB.close()
+    DB().execute("DELETE FROM matches;", False, True)
 
-
+# deletes all the entries in players table
 def deletePlayers():
     """Remove all the player records from the database."""
-    DB = connect()
-    c = DB.cursor()
-    c.execute("DELETE from players;")
-    DB.commit()
-    DB.close()
+    DB().execute("DELETE FROM players;", False, True)
 
-
+# returns the number of registered players
 def countPlayers():
     """Returns the number of players currently registered."""
-    DB = connect()
-    c = DB.cursor()
-    # c.execute("SELECT COUNT(*) from players;")
-    # use view instead
-    c.execute("SELECT num FROM players_num;")
-    r = c.fetchone()
-    DB.close()
+    t = DB().execute("SELECT count(*) FROM players", False)
+    r = t["cursor"].fetchone()
+    t["conn"].close()
     return r[0]
 
-
+# adds player to players table
 def registerPlayer(name):
     """Adds a player to the tournament database.
 
@@ -50,13 +33,9 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    DB = connect()
-    c = DB.cursor()
-    c.execute("INSERT INTO players (name) VALUES (%s)",(name,))
-    DB.commit()
-    DB.close()
+    DB().execute("INSERT INTO players (name) VALUES (%s)", (name,), True)
 
-
+# returns a list of tuples with id, name, wins and matches of a players
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
 
@@ -70,46 +49,33 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    DB = connect()
-    c = DB.cursor()
+
     q = """
         SELECT players.id, players.name, coalesce(wintable.wins, 0), coalesce(matchtable.matches, 0)
         FROM players
-        LEFT JOIN (
-            SELECT player1 as id, count(player1) as wins
-            FROM matches
-            GROUP BY player1) AS wintable ON players.id = wintable.id
-        LEFT JOIN (
-            SELECT id, count(id) as matches
-            FROM players, matches
-            WHERE players.id = player1 OR players.id = player2
-            GROUP BY id) AS matchtable ON players.id = matchtable.id
+        LEFT JOIN wintable ON players.id = wintable.id
+        LEFT JOIN matchtable ON players.id = matchtable.id
         ORDER BY CASE WHEN wins is null THEN 1 ELSE 0 END, wins desc;
         """
-    c.execute(q)
-    r = [(row[0], row[1], int(row[2]), int(row[3])) for row in c.fetchall()]
-    DB.close()
+    t = DB().execute(q, False)
+    r = [(row[0], row[1], int(row[2]), int(row[3])) for row in t["cursor"].fetchall()]
+    t["conn"].close()
     return r
 
-
-def reportMatch(player1, player2, outcome="nontied"):
+# records a match between two players and posibble tied outcome
+def reportMatch(player1, player2, tied=False):
     """Records the outcome of a single match between two players.
-
     Args:
       player1: the id number of the player who won
       player2: the id number of the player who lost
-      outcome: in case outcome of game is tied game, the third paramter outcome paramter should be passed as "tied"
+      tied: in case outcome of game is tied game, the third paramter outcome paramter should be passed as true (1) or false (0)
     """
-    DB = connect()
-    c = DB.cursor()
-    if outcome == "tied":
-        c.execute("INSERT INTO matches (player1,player2,outcome) values (%s, %s, %s)",(player1,player2,"tied"))
+    if tied:
+        DB().execute("INSERT INTO matches (player1,player2,tied) values (%s, %s, %s)",(player1,player2,tied), True)
     else:
-        c.execute("INSERT INTO matches (player1,player2) values (%s, %sgit )",(player1,player2))
-    DB.commit()
-    DB.close()
+        DB().execute("INSERT INTO matches (player1,player2) values (%s, %s )",(player1,player2), True)
 
-
+# returns a list of pairs of players for the next round of a match
 def swissPairings():
     """
     Returns a list of pairs of players for the next round of a match.

@@ -1,4 +1,4 @@
-This is Tournament project, it contains: a database schema for postgresql database to store the game matches between players and python code to query this data and determine the winners of various games in Swiss-system tournamet style.
+This is Tournament project, it contains a database schema for postgresql database to store the game matches between players and python code to query this data and determine the winners of various games in Swiss-system tournamet style.
 
 **To run the Application:**  
 open command line and create database schema with following command:

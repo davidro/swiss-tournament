@@ -14,5 +14,5 @@ python tournament_test.py
 - _tournament.sql_: table definitions for the project
 - _db.py_: a class to handle database connection and query execution
 - _tournament.py_: implementation of a Swiss-system tournament
-- _tournament_test.py_: test script to ensure everything works
+- _tournament_test.py_: test script to ensure everything works as expected
 - _/docs_: contains html documentation of python files you can open in your browser

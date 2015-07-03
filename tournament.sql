@@ -11,25 +11,25 @@ CREATE DATABASE tournament;
 
 -- 4. Create players Table
 CREATE TABLE players (
-  id serial primary key,
-  name text
+  id SERIAL PRIMARY KEY,
+  name TEXT
 );
 
 -- 5. Create matches Table, tied defines tied (true) or nontied match (false)
 CREATE TABLE matches (
-  player1 integer references players(id),
-  player2 integer references players(id),
-  tied boolean not null default false
+  player1 INTEGER REFERENCES players(id),
+  player2 INTEGER REFERENCES players(id),
+  tied BOOLEAN NOT NULL default false
 );
 
 -- 6. Create views: wintable and matchtable to make queries in playerStandings() more concise
-create view wintable AS
-  SELECT player1 as id, count(player1) as wins
+CREATE VIEW wintable AS
+  SELECT player1 AS id, count(player1) AS wins
   FROM matches
   GROUP BY player1;
 
-create view matchtable AS
-  SELECT id, count(id) as matches
+CREATE VIEW matchtable AS
+  SELECT id, count(id) AS matches
   FROM players, matches
   WHERE players.id = player1 OR players.id = player2
   GROUP BY id;

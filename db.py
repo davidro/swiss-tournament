@@ -1,34 +1,36 @@
 import psycopg2
 
-# a class to make DRY up the code and perist connection to the database between diffrent fuction calls
-class DB:
 
-    #  a constructor that defines connection to the database
+# a class to make DRY up the code
+# and perist connection to the database between diffrent fuction calls
+class DB:
+    #  A constructor that defines connection to the database
     def __init__(self, db_con="dbname=tournament"):
         """
         Creates a database connection with the connection string provided
-        :param str db_con: Contains the database connection string, with a default value when no argument is passed to the parameter
+        :param str db_con: Contains the database connection string,
+        with a default value when no argument is passed to the parameter
         """
         self.conn = psycopg2.connect(db_con)
 
-    # cursor method
+    # Cursor method
     def cursor(self):
         """
         Returns the current cursor of the database
         """
-        return self.conn.cursor();
+        return self.conn.cursor()
 
-    # method to exectute sql query, with optional query parametes and optional parameter to close connection
+    # method to exectute sql query, with optional query parametes
+    # and optional parameter to close connection
     def execute(self, sql_s, params=False, close_con=False):
         """
         Executes SQL queries
         :param str sql_s: Contain the query string to be executed
-        :param tuple params: Passes function paramters in way that is protected against SQL injections
-        :param bool close: If true, closes the database connection after executing and committing the SQL Query
+        :param tuple params: Passes function params protected against SQL injc.
+        :param bool close: If true, closes the database connection
         """
         cursor = self.cursor()
-
-        if params == False:
+        if params is False:
             cursor.execute(sql_s)
         else:
             cursor.execute(sql_s, params)

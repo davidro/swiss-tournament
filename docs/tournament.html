@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>tournament.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id="background"></div>
+<div id='container'>
+  <div class='section'>
+    <div class='docs'><h1>tournament.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>tournament.py -- implementation of a Swiss-system tournament</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>imports the db.py helper module to handle database connection,
+querying, executing and closing</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">DB</span> <span class="kn">import</span> <span class="o">*</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>deletes all the entries in matches table
+Remove all the match records from the database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">deleteMatches</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">q</span> <span class="o">=</span> <span class="s">&quot;TRUNCATE matches;&quot;</span>
+    <span class="n">DB</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>deletes all the entries in players table
+Remove all the player records from the database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">deletePlayers</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">q</span> <span class="o">=</span> <span class="s">&quot;TRUNCATE players CASCADE;&quot;</span>
+    <span class="n">DB</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>returns the number of registered players
+Returns the number of players currently registered.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">countPlayers</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">q</span> <span class="o">=</span> <span class="s">&quot;SELECT count(*) FROM players&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">DB</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s">&quot;cursor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="n">t</span><span class="p">[</span><span class="s">&quot;conn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>adds player to players table
+Adds a player to the tournament database.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">registerPlayer</span><span class="p">(</span><span class="n">name</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>The database assigns a unique serial id number for the player.  (This
+should be handled by your SQL database schema, not in your Python code.)</p>
+<p>Args:
+  name: the player's full name (need not be unique).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">q</span> <span class="o">=</span> <span class="s">&quot;INSERT INTO players (name) VALUES (</span><span class="si">%s</span><span class="s">)&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,)</span>
+    <span class="n">DB</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>returns a list of tuples with id, name, wins and matches of a players
+Returns a list of the players and their win records, sorted by wins.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">playerStandings</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>The first entry in the list should be the player in first place,
+or a player tied for first place if there is currently a tie.</p>
+<p>Returns:
+  A list of tuples, each of which contains (id, name, wins, matches):
+    id: the player's unique id (assigned by the database)
+    name: the player's full name (as registered)
+    wins: the number of matches the player has won
+    matches: the number of matches the player has played</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">q</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        SELECT players.id, players.name, coalesce(wintable.wins, 0),</span>
+<span class="s">        coalesce(matchtable.matches, 0)</span>
+<span class="s">        FROM players</span>
+<span class="s">        LEFT JOIN wintable ON players.id = wintable.id</span>
+<span class="s">        LEFT JOIN matchtable ON players.id = matchtable.id</span>
+<span class="s">        ORDER BY CASE WHEN wins is null THEN 1 ELSE 0 END, wins desc;</span>
+<span class="s">#DIVIDER</span>
+<span class="s">    Args:</span>
+<span class="s">      player1: the id number of the player who won</span>
+<span class="s">      player2: the id number of the player who lost</span>
+<span class="s">      tied: in case outcome of game is tied game,</span>
+<span class="s">      third paramter outcome paramter should be passed as true (1) or false (0)</span>
+<span class="s">#DIVIDER</span>
+<span class="s">    Returns a list of pairs of players for the next round of a match.</span>
+<span class="s">    Assuming that there are an even number of players registered, each player</span>
+<span class="s">    appears exactly once in the pairings.  Each player is paired with another</span>
+<span class="s">    player with an equal or nearly-equal win record, that is, a player adjacent</span>
+<span class="s">    to him or her in the standings.</span>
+
+<span class="s">    Returns:</span>
+<span class="s">      A list of tuples, each of which contains (id1, name1, id2, name2)</span>
+<span class="s">        id1: the first player&#39;s unique id</span>
+<span class="s">        name1: the first player&#39;s name</span>
+<span class="s">        id2: the second player&#39;s unique id</span>
+<span class="s">        name2: the second player&#39;s name</span>
+<span class="s">#DIVIDER</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>DB().execute(q, False)
+([(row[0], row[1], int(row[2]), int(row[3]))
+ for row in t["cursor"]
+ .fetchall()])
+onn"].close()
+rn r</p>
+<p>s a match between two players and posibble tied outcome
+rtMatch(player1, player2, tied=False):
+Records the outcome of a single match between two players.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>if tied:
+    q = "INSERT INTO matches (player1,player2,tied) VALUES (%s, %s, %s)"
+    p = (player1, player2, tied)
+else:
+    q = "INSERT INTO matches (player1,player2) VALUES (%s, %s )"
+    p = (player1, player2)
+DB().execute(q, p, True)</p>
+<p>turns a list of pairs of players for the next round of a match
+swissPairings():</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>ps = playerStandings()
+r = []</p>
+<h1>http://discussions.udacity.com/t/idiomatic-code-for-swisspairings-function/17210</h1>
+<p>for p1, p2 in zip(ps[0::2], ps[1::2]):
+    r.append((p1[0], p1[1], p2[0], p2[1]))</p>
+<p>return r</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
